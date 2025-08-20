@@ -1,19 +1,166 @@
 # 🧠 Smart Tagging Service
 
-Um microserviço em **FastAPI** que utiliza **IA (OpenAI)** para analisar textos de leads e gerar **tags inteligentes** automaticamente.  
-Essas tags são registradas no **Supabase** (para histórico/análise) e também enviadas para o **ActiveCampaign** (para segmentação de marketing).  
+Microserviço em **FastAPI** que usa **OpenAI** para analisar textos de leads e gerar **tags inteligentes** automaticamente.  
+As tags e os metadados são salvos no **Supabase** e (opcionalmente) aplicados no **ActiveCampaign** para segmentação/automação.
+
+## ✨ Funcionalidades
+
+- 🔎 Classificação de textos com IA → gera **tags** e **confiança**  
+- 🗄️ Persistência no **Supabase** (histórico e auditoria)  
+- 🎯 Integração com **ActiveCampaign** (aplica tags no contato)  
+- 📦 **/tag/batch** para processar vários itens de uma vez  
+- 🧰 Documentação automática em `/docs` (Swagger)
+
+## 📁 Estrutura
+
+smart-tagging-service/
+│── app/
+│ ├── main.py # Endpoints FastAPI
+│ └── services/
+│ ├── openai_client.py # OpenAI (geração de tags)
+│ ├── supabase_client.py # Supabase (persistência)
+│ └── ac_client.py # ActiveCampaign (contatos/tags)
+│── scripts/
+│ └── sample_ingest.py # Exemplo de ingestão em lote
+│── .env.example # Modelo de variáveis de ambiente
+│── requirements.txt # Dependências
+│── docker-compose.yml # Subir com Docker
+│── Dockerfile # Build da imagem
+│── README.md # Este arquivo
+
+> **Importante:** mantenha **`.env` fora do Git** (já coberto no `.gitignore`).  
+> Comite **`.env.example`** para servir de referência.
+
+## 🔧 Pré-requisitos
+
+- Python **3.10+**
+- Conta/keys de **OpenAI**
+- Projeto **Supabase** (URL + service role)
+- (Opcional) Conta **ActiveCampaign** (API URL + API Token)
+- Git / Docker (opcional)
+
+## ⚙️ Configuração
+
+### 1) Clonar o repositório
+```bash
+git clone https://github.com/<seu-usuario>/smart-tagging-service.git
+cd smart-tagging-service
+```
+### 2) Criar e preencher o .env 
+cp .env.example .env
+
+# OpenAI
+OPENAI_API_KEY=
+
+# ActiveCampaign
+AC_API_KEY=
+AC_API_BASE=https://<sua-conta>.api-us1.com/api/3
+
+# Supabase
+SUPABASE_URL=https://<seu-projeto>.supabase.co
+SUPABASE_KEY=<service_role_key>
+
+# Comportamento
+MOCK_OPENAI=false
+API_URL=http://localhost:8000/tag
+
+### 3) (Supabase) Criar tabela de logs
+
+create table if not exists public.tag_logs (
+  id bigserial primary key,
+  created_at timestamptz default now(),
+  source text,
+  external_id text,
+  email text,
+  input_text text,
+  tags jsonb,
+  confidence numeric,
+  model_response jsonb,
+  ac_response jsonb,
+  processed boolean default false
+);
+create index if not exists idx_tag_logs_created_at on public.tag_logs (created_at desc);
+
+### 4) Instalar dependências
+
+python -m venv .venv
+# Windows
+.\.venv\Scripts\activate
+# macOS/Linux
+source .venv/bin/activate
+
+pip install -r requirements.txt
+
+### 5) Subir a API
+
+uvicorn app.main:app --host 127.0.0.1 --port 8000
+
 
 ---
 
-## 🚀 Funcionalidades
+###6) — ▶️ Exemplos de Uso
+### Healthcheck
+```bash
+curl http://127.0.0.1:8000/health
+```
 
-- 🔎 Geração automática de **tags** a partir de descrições de clientes
-- 📊 Registro estruturado no **Supabase**
-- 🎯 Integração direta com **ActiveCampaign** para segmentação
-- 🧩 API REST simples e extensível
-- ⚡ Suporte a requisições **batch** (vários leads de uma vez)
+**Classificar um texto**
+
+curl -X POST "http://127.0.0.1:8000/tag" \
+  -H "Content-Type: application/json" \
+  -d '{"text":"Paciente procura implante dentário, quer parcelar"}'
+
+**Classificar + aplicar tags no ActiveCampaign**
+curl -X POST "http://127.0.0.1:8000/tag?debug=true" \
+  -H "Content-Type: application/json" \
+  -d '{"text":"Paciente procura implante dentário, quer parcelar", "email":"lead@exemplo.com"}'
+
+**Lote (/tag/batch)**
+curl -X POST "http://127.0.0.1:8000/tag/batch" \
+  -H "Content-Type: application/json" \
+  -d '[{"text":"Paciente quer implante e parcelamento"},
+      {"text":"Clareamento e limpeza"}]'
+
+**Lote com e-mail padrão (aplica no mesmo contato)**
+curl -X POST "http://127.0.0.1:8000/tag/batch?default_email=lead@exemplo.com" \
+  -H "Content-Type: application/json" \
+  -d '[{"text":"Texto A"},{"text":"Texto B"}]'
+
+  
+---
+
 
 ---
 
-## 📂 Estrutura do Projeto
+### **7) — Boas práticas**
+```markdown
+## 🔐 Boas práticas
+
+- **Nunca** comite `.env` ou chaves → use `.env.example` como referência.  
+- Em produção, defina as variáveis de ambiente no provedor (Render, Railway, Fly, etc.).  
+- Use `MOCK_OPENAI=true` para testar sem custo.  
+- No Windows, evite `--reload` se notar processos “presos” (use uma porta alternativa ou reinicie).
+```
+
+## 🗺️ Roadmap
+
+- [ ] Testes unitários/integração (pytest)  
+- [ ] Normalização de tags (acentos/variações)  
+- [ ] Fila assíncrona para alto volume (RQ/Celery)  
+- [ ] Dashboard de métricas no Supabase / Metabase  
+- [ ] Webhook para processar leads de formulários/WhatsApp
+
+ ## 🙋‍♂️ Autor
+
+**Gabriel Costa**  
+LinkedIn: https://www.linkedin.com/in/gabriel-costa-a565a5331/
+
+---
+
+## 📄 Licença
+
+Este projeto pode ser usado livremente para fins de estudo e demonstração.  
+Adapte a licença conforme sua necessidade (MIT é uma boa opção).
+
+
 
