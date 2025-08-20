@@ -98,7 +98,7 @@ uvicorn app.main:app --host 127.0.0.1 --port 8000
 
 ---
 
-###6) — ▶️ Exemplos de Uso
+### 6) — ▶️ Exemplos de Uso
 ### Healthcheck
 ```bash
 curl http://127.0.0.1:8000/health
