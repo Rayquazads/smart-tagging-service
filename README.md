@@ -48,8 +48,9 @@ git clone https://github.com/<seu-usuario>/smart-tagging-service.git
 cd smart-tagging-service
 ```
 ### 2) Criar e preencher o .env 
+```bash
 cp .env.example .env
-
+```
 # OpenAI
 OPENAI_API_KEY=
 
@@ -83,19 +84,24 @@ create table if not exists public.tag_logs (
 create index if not exists idx_tag_logs_created_at on public.tag_logs (created_at desc);
 ```
 ### 4) Instalar dependências
-
+```bash
 python -m venv .venv
+```
 # Windows
+```bash
 .\.venv\Scripts\activate
+```
 # macOS/Linux
+```bash
 source .venv/bin/activate
-
+```
+```bash
 pip install -r requirements.txt
-
+```
 ### 5) Subir a API
-
+``` bash
 uvicorn app.main:app --host 127.0.0.1 --port 8000
-
+```
 
 ---
 
@@ -106,27 +112,24 @@ curl http://127.0.0.1:8000/health
 ```
 
 **Classificar um texto**
-
+```bash
 curl -X POST "http://127.0.0.1:8000/tag" \
   -H "Content-Type: application/json" \
   -d '{"text":"Paciente procura implante dentário, quer parcelar"}'
-
+```
 **Classificar + aplicar tags no ActiveCampaign**
+```bash
 curl -X POST "http://127.0.0.1:8000/tag?debug=true" \
   -H "Content-Type: application/json" \
   -d '{"text":"Paciente procura implante dentário, quer parcelar", "email":"lead@exemplo.com"}'
-
+```
+```bash
 **Lote (/tag/batch)**
 curl -X POST "http://127.0.0.1:8000/tag/batch" \
   -H "Content-Type: application/json" \
   -d '[{"text":"Paciente quer implante e parcelamento"},
       {"text":"Clareamento e limpeza"}]'
-
-**Lote com e-mail padrão (aplica no mesmo contato)**
-curl -X POST "http://127.0.0.1:8000/tag/batch?default_email=lead@exemplo.com" \
-  -H "Content-Type: application/json" \
-  -d '[{"text":"Texto A"},{"text":"Texto B"}]'
-
+```
   
 ---
 
