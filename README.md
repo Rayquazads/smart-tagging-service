@@ -47,7 +47,7 @@ smart-tagging-service/
 git clone https://github.com/<seu-usuario>/smart-tagging-service.git
 cd smart-tagging-service
 ```
-### 2) Criar e preencher o .env 
+### 2) Criar e preencher o `.env`
 ```bash
 cp .env.example .env
 ```
@@ -65,6 +65,7 @@ SUPABASE_KEY=<service_role_key>
 # Comportamento
 MOCK_OPENAI=false
 API_URL=http://localhost:8000/tag
+
 
 ### 3) (Supabase) Criar tabela de logs
 ```SQL
