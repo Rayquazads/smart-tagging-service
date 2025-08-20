@@ -49,7 +49,6 @@ cd smart-tagging-service
 ```
 ### 2) Criar e preencher o `.env`
 ```ini
-```bash
 cp .env.example .env
 
 # OpenAI
