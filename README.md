@@ -1,21 +1,19 @@
-# Smart Tagging Service
+# 🧠 Smart Tagging Service
 
-API para gerar tags a partir de textos (leads / produtos), salvar auditoria no Supabase e (opcional) aplicar tags no ActiveCampaign.
+Um microserviço em **FastAPI** que utiliza **IA (OpenAI)** para analisar textos de leads e gerar **tags inteligentes** automaticamente.  
+Essas tags são registradas no **Supabase** (para histórico/análise) e também enviadas para o **ActiveCampaign** (para segmentação de marketing).  
 
-## Quickstart
+---
 
-1. Clone / crie pasta do projeto.
-2. Crie e ative virtualenv:
-   - Windows PowerShell:
-     ```powershell
-     python -m venv .venv
-     .\.venv\Scripts\Activate.ps1
-     ```
-   - macOS / Linux:
-     ```bash
-     python -m venv .venv
-     source .venv/bin/activate
-     ```
-3. Instale dependências:
-```bash
-pip install -r requirements.txt
+## 🚀 Funcionalidades
+
+- 🔎 Geração automática de **tags** a partir de descrições de clientes
+- 📊 Registro estruturado no **Supabase**
+- 🎯 Integração direta com **ActiveCampaign** para segmentação
+- 🧩 API REST simples e extensível
+- ⚡ Suporte a requisições **batch** (vários leads de uma vez)
+
+---
+
+## 📂 Estrutura do Projeto
+
