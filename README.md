@@ -13,6 +13,7 @@ As tags e os metadados são salvos no **Supabase** e (opcionalmente) aplicados n
 
 ## 📁 Estrutura
 
+```
 smart-tagging-service/
 │── app/
 │ ├── main.py # Endpoints FastAPI
@@ -27,7 +28,7 @@ smart-tagging-service/
 │── docker-compose.yml # Subir com Docker
 │── Dockerfile # Build da imagem
 │── README.md # Este arquivo
-
+```
 > **Importante:** mantenha **`.env` fora do Git** (já coberto no `.gitignore`).  
 > Comite **`.env.example`** para servir de referência.
 
@@ -65,7 +66,7 @@ MOCK_OPENAI=false
 API_URL=http://localhost:8000/tag
 
 ### 3) (Supabase) Criar tabela de logs
-
+```SQL
 create table if not exists public.tag_logs (
   id bigserial primary key,
   created_at timestamptz default now(),
@@ -80,7 +81,7 @@ create table if not exists public.tag_logs (
   processed boolean default false
 );
 create index if not exists idx_tag_logs_created_at on public.tag_logs (created_at desc);
-
+```
 ### 4) Instalar dependências
 
 python -m venv .venv
