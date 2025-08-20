@@ -1,0 +1,12 @@
+# Ambiente virtual
+.venv/
+venv/
+__pycache__/
+*.pyc
+
+# Configurações locais
+.idea/
+*.log
+
+# Variáveis de ambiente
+.env
