@@ -123,8 +123,9 @@ curl -X POST "http://127.0.0.1:8000/tag?debug=true" \
   -H "Content-Type: application/json" \
   -d '{"text":"Paciente procura implante dentário, quer parcelar", "email":"lead@exemplo.com"}'
 ```
-```bash
+
 **Lote (/tag/batch)**
+```bash
 curl -X POST "http://127.0.0.1:8000/tag/batch" \
   -H "Content-Type: application/json" \
   -d '[{"text":"Paciente quer implante e parcelamento"},
